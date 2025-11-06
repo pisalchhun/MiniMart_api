@@ -107,3 +107,24 @@ def get_invoice_details(invoice_id):
         })
 
     return jsonify(data), 200
+
+# ✅ 5. List All Sale Details
+@app.get('/invoice-detail/list-all')
+def get_all_invoice_details():
+    details = InvoiceDetail.query.all()
+
+    if not details:
+        return jsonify({'message': 'No sale details found!'}), 404
+
+    data = []
+    for d in details:
+        data.append({
+            'id': d.id,
+            'invoice_id': d.invoice_id,
+            'product_name': d.product_name,
+            'quantity': d.quantity,
+            'price': float(d.price),
+            'subtotal': float(d.subtotal)
+        })
+
+    return jsonify(data), 200
