@@ -4,7 +4,6 @@ from sqlalchemy import func
 from model.invoice import Invoice
 from model.invoice_detail import InvoiceDetail
 
-# -------------------- 1. Daily Sales --------------------
 @app.get('/report/daily/<string:date_str>')
 def report_daily(date_str):
     from datetime import datetime
@@ -14,7 +13,6 @@ def report_daily(date_str):
     data = [{'invoice_id': s.id, 'customer_name': s.customer_name, 'total': float(s.total)} for s in sales]
     return jsonify({'date': date_str, 'total_sales': total, 'invoices': data}), 200
 
-# -------------------- 2. Weekly Sales --------------------
 @app.get('/report/weekly/<int:year>/<int:week_num>')
 def report_weekly(year, week_num):
     # SQLite: strftime('%Y-%W')
@@ -23,7 +21,6 @@ def report_weekly(year, week_num):
     data = [{'invoice_id': s.id, 'customer_name': s.customer_name, 'total': float(s.total)} for s in sales]
     return jsonify({'year': year, 'week': week_num, 'total_sales': total, 'invoices': data}), 200
 
-# -------------------- 3. Monthly Sales --------------------
 @app.get('/report/monthly/<int:year>/<int:month>')
 def report_monthly(year, month):
     sales = Invoice.query.filter(
@@ -34,7 +31,6 @@ def report_monthly(year, month):
     data = [{'invoice_id': s.id, 'customer_name': s.customer_name, 'total': float(s.total)} for s in sales]
     return jsonify({'year': year, 'month': month, 'total_sales': total, 'invoices': data}), 200
 
-# -------------------- 4. Sales by Criteria --------------------
 @app.get('/report/saleby')
 def report_saleby():
     """

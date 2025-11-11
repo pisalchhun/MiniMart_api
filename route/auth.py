@@ -49,22 +49,17 @@ def logout():
 @app.post("/reset-password")
 @jwt_required()
 def reset_password():
-    user_id = int(get_jwt_identity())  # Ensure integer for querying
-
+    user_id = int(get_jwt_identity())
     data = request.get_json() or {}
     old_password = str(data.get("old_password", "")).strip()
     new_password = str(data.get("new_password", "")).strip()
-
     if not old_password or not new_password:
         return jsonify({"msg": "Both old and new passwords are required"}), 400
-
     user = User.query.get(user_id)
     if not user:
         return jsonify({"msg": "User not found"}), 404
-
     if not check_password_hash(user.password, old_password):
         return jsonify({"msg": "Old password is incorrect"}), 400
-
     user.password = generate_password_hash(new_password)
     db.session.commit()
 
