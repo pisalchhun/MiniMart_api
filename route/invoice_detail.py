@@ -3,7 +3,6 @@ from app import app, db
 from model.invoice_detail import InvoiceDetail
 from model.invoice import Invoice
 
-# 🧮 Helper function to recalc invoice total
 def update_invoice_total(invoice_id):
     details = InvoiceDetail.query.filter_by(invoice_id=invoice_id).all()
     total = sum([float(d.subtotal) for d in details])
@@ -12,8 +11,6 @@ def update_invoice_total(invoice_id):
         invoice.total = total
         db.session.commit()
 
-
-# ✅ 1. Create Sale Detail
 @app.post('/invoice-detail/create')
 def create_invoice_detail():
     data = request.get_json()
@@ -47,8 +44,6 @@ def create_invoice_detail():
 
     return jsonify({'message': 'Sale detail added and invoice total updated!'}), 201
 
-
-# ✅ 2. Update Sale Detail
 @app.put('/invoice-detail/update/<int:id>')
 def update_invoice_detail(id):
     data = request.get_json()
@@ -63,14 +58,10 @@ def update_invoice_detail(id):
     detail.subtotal = detail.quantity * detail.price
 
     db.session.commit()
-
-    # update invoice total
     update_invoice_total(detail.invoice_id)
 
     return jsonify({'message': 'Sale detail updated and invoice total recalculated!'}), 200
 
-
-# ✅ 3. Delete Sale Detail
 @app.delete('/invoice-detail/delete/<int:id>')
 def delete_invoice_detail(id):
     detail = InvoiceDetail.query.get(id)
@@ -80,14 +71,9 @@ def delete_invoice_detail(id):
     invoice_id = detail.invoice_id
     db.session.delete(detail)
     db.session.commit()
-
-    # update invoice total
     update_invoice_total(invoice_id)
-
     return jsonify({'message': 'Sale detail deleted and invoice total updated!'}), 200
 
-
-# ✅ 4. List Sale Details for an Invoice
 @app.get('/invoice-detail/list/<int:invoice_id>')
 def get_invoice_details(invoice_id):
     details = InvoiceDetail.query.filter_by(invoice_id=invoice_id).all()
@@ -108,7 +94,6 @@ def get_invoice_details(invoice_id):
 
     return jsonify(data), 200
 
-# ✅ 5. List All Sale Details
 @app.get('/invoice-detail/list-all')
 def get_all_invoice_details():
     details = InvoiceDetail.query.all()
